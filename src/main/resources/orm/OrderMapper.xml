@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiz.demo.lock.data.dao.OrderDao">
+	<sql id="orderColumns">
+		<![CDATA[
+			a.ID as ID,
+			a.PRODUCT_NAME as PRODUCT_NAME,
+			a.AMOUNT as AMOUNT,
+			a.ORDER_DATE_TIME as ORDER_DATE_TIME
+		]]>
+	</sql>
+	<resultMap id="detailedOrderResultMap" type="Order">
+		<id property="id" column="ID" />
+		<result property="productName" column="PRODUCT_NAME" />
+		<result property="amount" column="AMOUNT" />
+		<result property="orderDateTime" column="ORDER_DATE_TIME" />
+	</resultMap>
+	<select id="findByProductName" resultMap="detailedOrderResultMap">
+		<![CDATA[ select ]]>
+		<include refid="orderColumns" />
+		<![CDATA[
+			from TBL_ORDER a 
+			where a.PRODUCT_NAME = #{productName};
+		]]>
+	</select>
+	<insert id="add">
+		<![CDATA[
+			INSERT INTO TBL_ORDER (PRODUCT_NAME, AMOUNT, ORDER_DATE_TIME)
+			VALUES(#{productName}, #{amount}, #{orderDateTime});
+		 ]]>
+	</insert>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiz.demo.lock.data.dao.ProductDao">
+	<sql id="productColumns">
+		<![CDATA[
+			a.ID as ID,
+			a.NAME as NAME,
+			a.STOCK as STOCK
+		]]>
+	</sql>
+	<resultMap id="detailedProductResultMap" type="Product">
+		<id property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="stock" column="STOCK" />
+	</resultMap>
+	<select id="findById" resultMap="detailedProductResultMap">
+		<![CDATA[ select ]]>
+		<include refid="productColumns" />
+		<![CDATA[
+			from TBL_PRODUCT a 
+			where a.ID = #{id};
+		]]>
+	</select>
+	<update id="update">
+		<![CDATA[
+			update TBL_PRODUCT
+			SET STOCK = #{stock}
+			WHERE ID = #{id}
+		 ]]>
+	</update>
+
+</mapper>

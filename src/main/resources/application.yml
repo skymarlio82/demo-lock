@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    name: ds_druid
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filters: stat,wall
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initial-size: 2
+      min-idle: 2
+      max-active: 20
+      max-wait: 10000
+      time-between-eviction-runs-millis: 600000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      keep-alive: true
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+mybatis:
+  mapper-locations: classpath:orm/*.xml
+  type-aliases-package: com.wiz.demo.lock.data.entity
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.wiz.demo.lock: DEBUG

@@ -1,0 +1,16 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/test01?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      username: root
+      password: password
+  redis:
+    host: localhost
+    port: 6379
+    password: pass1234
+    database: 0
+#redisson:
+#  address: redis://localhost:6379
+#  password: pass1234
