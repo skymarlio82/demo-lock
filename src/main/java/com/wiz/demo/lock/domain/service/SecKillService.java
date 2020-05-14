@@ -32,8 +32,6 @@ public class SecKillService {
 //	@Autowired
 //	private RedissonClient redissonClient;
 
-	public static byte[] syns = new byte[1];
-
 	@Transactional(readOnly=true)
 	public String findProductInfo(int productId) {
 		String result = "";
@@ -46,31 +44,30 @@ public class SecKillService {
 
 	@Transactional
 	public String seckill(int productId) {
-		synchronized (SecKillService.syns) {
-			long time = System.currentTimeMillis() + 1000*10;
-			String key = "upt_stk_lck_prd_" + productId;
-//			String key = "upt_stk_lck_prd_" + productId + "_" + UUID.randomUUID().toString().replaceAll("-", "");
-			// 如果加锁失败
-			if (!redisLock.tryLock(key, String.valueOf(time))) {
-				return "Failure";
-			}
-//			System.err.println("dddddddddddddddddddddd");
-//			try {
-//				Thread.sleep(10000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			RLock lock = redissonClient.getLock(key);
-//			lock.lock();
-			Product product = productDao.findById(productId);
-			Order order = new Order(0, product.getName(), 1, new Date());
-			orderDao.add(order);
-			product.setStock(product.getStock() - 1);
-			productDao.update(product);
-			// 解锁
-			redisLock.unlock(key, String.valueOf(time));
-//			lock.unlock();
-			return "Success";
+		long time = System.currentTimeMillis() + 1000*10;
+		String key = "upt_stk_lck_prd_" + productId;
+//		synchronized(key.intern()) {
+		// 如果加锁失败
+		if (!redisLock.tryLock(key, String.valueOf(time))) {
+			return "Failure";
 		}
+//		System.err.println("dddddddddddddddddddddd");
+//		try {
+//			Thread.sleep(10000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		RLock lock = redissonClient.getLock(key);
+//		lock.lock();
+		Product product = productDao.findById(productId);
+		Order order = new Order(0, product.getName(), 1, new Date());
+		orderDao.add(order);
+		product.setStock(product.getStock() - 1);
+		productDao.update(product);
+		// 解锁
+		redisLock.unlock(key, String.valueOf(time));
+//		lock.unlock();
+//		}
+		return "Success";
 	}
 }
