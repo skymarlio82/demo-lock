@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wiz.demo.lock.common.model.RedisLock;
+//import com.wiz.demo.lock.common.model.RedisLock;
 import com.wiz.demo.lock.data.dao.OrderDao;
 import com.wiz.demo.lock.data.dao.ProductDao;
 import com.wiz.demo.lock.data.entity.Order;
@@ -26,11 +26,13 @@ public class SecKillService {
 	@Autowired
 	private OrderDao orderDao = null;
 
-	@Autowired
-	private RedisLock redisLock = null;
+//	@Autowired
+//	private RedisLock redisLock = null;
 
 //	@Autowired
 //	private RedissonClient redissonClient;
+
+	public static byte[] syns = new byte[1];
 
 	@Transactional(readOnly=true)
 	public String findProductInfo(int productId) {
@@ -43,14 +45,14 @@ public class SecKillService {
 	}
 
 	@Transactional
-	public String seckill(int productId) {
-		long time = System.currentTimeMillis() + 1000*10;
-		String key = "upt_stk_lck_prd_" + productId;
-//		synchronized(key.intern()) {
+	public int seckill(int productId) {
+//		long time = System.currentTimeMillis() + 1000*10;
+//		String key = "upt_stk_lck_prd_" + productId;
+//		synchronized(SecKillService.syns) {
 		// 如果加锁失败
-		if (!redisLock.tryLock(key, String.valueOf(time))) {
-			return "Failure";
-		}
+//		if (!redisLock.tryLock(key, String.valueOf(time))) {
+//			return productId;
+//		}
 //		System.err.println("dddddddddddddddddddddd");
 //		try {
 //			Thread.sleep(10000);
@@ -65,9 +67,9 @@ public class SecKillService {
 		product.setStock(product.getStock() - 1);
 		productDao.update(product);
 		// 解锁
-		redisLock.unlock(key, String.valueOf(time));
+//		redisLock.unlock(key, String.valueOf(time));
 //		lock.unlock();
 //		}
-		return "Success";
+		return 0;
 	}
 }
