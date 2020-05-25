@@ -26,12 +26,12 @@ public class SecKillController {
 	@RequestMapping(value="/seckill/{id}", method=RequestMethod.GET)
 	@ResponseBody
 	public String seckillByProductId(@PathVariable(required=true, name="id") int id) {
-		AppConstant.REQ_CACHE_QUEUE.add(id);
+//		AppConstant.REQ_CACHE_QUEUE.add(id);
 //		if (!secKillService.seckill(id).equals("Success")) {
 //			return "系统繁忙 ...";
 //		}
 //		return secKillService.findProductInfo(id);
-//		return secKillService.seckill(id);
+		secKillService.seckill(id);
 		return "Success";
 	}
 }

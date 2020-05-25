@@ -3,7 +3,9 @@ package com.wiz.demo.lock.domain.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 //import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 
 //import org.redisson.api.RLock;
 //import org.redisson.api.RedissonClient;
@@ -34,6 +36,8 @@ public class SecKillService {
 
 	public static byte[] syns = new byte[1];
 
+	private Lock lock = new ReentrantLock(true);
+
 	@Transactional(readOnly=true)
 	public String findProductInfo(int productId) {
 		String result = "";
@@ -60,7 +64,7 @@ public class SecKillService {
 //			e.printStackTrace();
 //		}
 //		RLock lock = redissonClient.getLock(key);
-//		lock.lock();
+		lock.lock();
 		Product product = productDao.findById(productId);
 		Order order = new Order(0, product.getName(), 1, new Date());
 		orderDao.add(order);
@@ -68,7 +72,7 @@ public class SecKillService {
 		productDao.update(product);
 		// 解锁
 //		redisLock.unlock(key, String.valueOf(time));
-//		lock.unlock();
+		lock.unlock();
 //		}
 		return 0;
 	}
