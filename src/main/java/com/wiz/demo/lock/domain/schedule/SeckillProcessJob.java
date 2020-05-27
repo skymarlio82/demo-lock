@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.scheduling.annotation.Async;
 //import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+//import org.springframework.stereotype.Component;
 
 import com.wiz.demo.lock.common.constant.AppConstant;
 import com.wiz.demo.lock.domain.service.SecKillService;
 
-@Component
+//@Component
 //@EnableAsync
 public class SeckillProcessJob {
 

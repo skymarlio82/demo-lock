@@ -3,17 +3,12 @@ package com.wiz.demo.lock.domain.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-//import java.util.UUID;
-import java.util.concurrent.locks.ReentrantLock;
 
-//import org.redisson.api.RLock;
-//import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//import com.wiz.demo.lock.common.model.RedisLock;
+import com.wiz.demo.lock.common.model.RedisLock;
 import com.wiz.demo.lock.data.dao.OrderDao;
 import com.wiz.demo.lock.data.dao.ProductDao;
 import com.wiz.demo.lock.data.entity.Order;
@@ -28,15 +23,8 @@ public class SecKillService {
 	@Autowired
 	private OrderDao orderDao = null;
 
-//	@Autowired
-//	private RedisLock redisLock = null;
-
-//	@Autowired
-//	private RedissonClient redissonClient;
-
-	public static byte[] syns = new byte[1];
-
-	private Lock lock = new ReentrantLock(true);
+	@Autowired
+	private RedisLock redisLock = null;
 
 	@Transactional(readOnly=true)
 	public String findProductInfo(int productId) {
@@ -50,30 +38,28 @@ public class SecKillService {
 
 	@Transactional
 	public int seckill(int productId) {
-//		long time = System.currentTimeMillis() + 1000*10;
-//		String key = "upt_stk_lck_prd_" + productId;
-//		synchronized(SecKillService.syns) {
+		long time = System.currentTimeMillis() + 1000*5;
+		String key = "upt_stk_lck_prd_" + productId;
 		// 如果加锁失败
-//		if (!redisLock.tryLock(key, String.valueOf(time))) {
-//			return productId;
-//		}
-//		System.err.println("dddddddddddddddddddddd");
-//		try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//		RLock lock = redissonClient.getLock(key);
-		lock.lock();
+		if (!redisLock.tryLock(key, String.valueOf(time))) {
+			return productId;
+		}
 		Product product = productDao.findById(productId);
 		Order order = new Order(0, product.getName(), 1, new Date());
 		orderDao.add(order);
 		product.setStock(product.getStock() - 1);
 		productDao.update(product);
 		// 解锁
-//		redisLock.unlock(key, String.valueOf(time));
-		lock.unlock();
-//		}
+		redisLock.unlock(key, String.valueOf(time));
 		return 0;
+	}
+
+	@Transactional
+	public void seckill1(int productId) {
+		Product product = productDao.findById(productId);
+		Order order = new Order(0, product.getName(), 1, new Date());
+		orderDao.add(order);
+		product.setStock(product.getStock() - 1);
+		productDao.update(product);
 	}
 }
