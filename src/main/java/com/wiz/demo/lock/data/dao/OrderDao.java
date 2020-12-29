@@ -1,15 +1,13 @@
-
 package com.wiz.demo.lock.data.dao;
 
-import java.util.List;
-
+import com.wiz.demo.lock.data.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
 
-import com.wiz.demo.lock.data.entity.Order;
+import java.util.List;
 
 @Mapper
 public interface OrderDao {
 
-	List<Order> findByProductName(String productName);
-	void add(Order order);
+    List<Order> findByProductName(String productName);
+    void add(Order order);
 }
